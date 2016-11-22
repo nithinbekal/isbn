@@ -8,6 +8,7 @@ defmodule ISBN.Mixfile do
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
      deps: [],
+     description: "A package to check valid ISBNs",
      package: package,
     ]
   end
