@@ -1,12 +1,9 @@
 # ISBN
 
-**TODO: Add description**
 
 ## Installation
 
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed as:
-
-  1. Add `isbn` to your list of dependencies in `mix.exs`:
+Add `isbn` to your list of dependencies in `mix.exs`:
 
     ```elixir
     def deps do
@@ -14,11 +11,15 @@ If [available in Hex](https://hex.pm/docs/publish), the package can be installed
     end
     ```
 
-  2. Ensure `isbn` is started before your application:
+## Examples
 
-    ```elixir
-    def application do
-      [applications: [:isbn]]
-    end
-    ```
+`ISBN.valid?/1` checks if the given string is a valid ISBN.
+
+```elixir
+ISBN.valid?("0-306-40615-2")
+#=> true
+
+ISBN.valid?("1234567")
+#=> false
+```
 

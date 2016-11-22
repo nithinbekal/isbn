@@ -1,4 +1,20 @@
 defmodule ISBN do
+  @moduledoc """
+  Provides functions to work with ISBNs.
+  """
+
+  @doc """
+  Checks if the given string is a valid ISBN.
+
+  Works with both ISBN-10 and ISBN-13. Allows hyphens in the string.
+
+      iex> ISBN.valid?("0-306-40615-2")
+      true
+
+      iex> ISBN.valid?("1234567")
+      false
+
+  """
   def valid?(s) when is_binary(s) do
     String.replace(s, "-", "")
     |> String.codepoints
