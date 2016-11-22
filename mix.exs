@@ -7,7 +7,7 @@ defmodule ISBN.Mixfile do
      elixir: "~> 1.3",
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
-     deps: [],
+     deps: deps,
      description: "A package to check valid ISBNs",
      package: package,
     ]
@@ -15,6 +15,12 @@ defmodule ISBN.Mixfile do
 
   def application do
     [applications: [:logger]]
+  end
+
+  defp deps do
+    [
+      {:ex_doc, ">= 0.0.0", only: :dev},
+    ]
   end
 
   defp package do
