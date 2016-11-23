@@ -22,6 +22,41 @@ defmodule ISBN do
   end
   def valid?(_), do: false
 
+  @doc """
+  Converts ISBN 10 to ISBN 13.
+
+      iex> ISBN.convert_10_to_13("161729201X")
+      "9781617292019"
+
+  """
+  def convert_10_to_13(str) do
+    str
+    |> String.replace("-", "")
+    |> convert_isbn10_to_13
+  end
+
+  @doc """
+  Checks if the string is a valid ISBN 10 number.
+  """
+  def valid_isbn10?(str) do
+    str
+    |> String.replace("-", "")
+    |> (fn s -> (String.length(s) == 10) && valid?(s) end).()
+  end
+
+  defp convert_isbn10_to_13(str) do
+    if valid_isbn10?(str) do
+      "978#{String.slice(str, 0..8)}"
+      |> append_isbn13_check_digit
+    else
+      {:error, :invalid_isbn}
+    end
+  end
+
+  defp append_isbn13_check_digit(s) do
+    s <> isbn13_checkdigit(String.codepoints(s))
+  end
+
   defp check_valid_isbn(digits) when length(digits) == 10 do
     isbn10_checkdigit(digits) == Enum.at(digits, 9)
   end
@@ -50,10 +85,8 @@ defmodule ISBN do
     |> Enum.take(12)
     |> Enum.map(&String.to_integer/1)
     |> Enum.zip(Stream.cycle([1, 3]))
-    |> IO.inspect
     |> Enum.map(fn {a, b} -> a * b end)
     |> Enum.sum
-    |> IO.inspect
     |> rem(10)
     |> (fn x -> 10 - x end).()
     |> Integer.to_string
