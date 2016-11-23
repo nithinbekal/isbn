@@ -37,11 +37,39 @@ defmodule ISBN do
 
   @doc """
   Checks if the string is a valid ISBN 10 number.
+
+      iex> ISBN.valid_isbn10?("076243631-X")
+      true
+
+      iex> ISBN.valid_isbn10?("978-0-306-40615-7")
+      false
+
+  end
   """
   def valid_isbn10?(str) do
     str
     |> remove_dashes
-    |> (fn s -> (String.length(s) == 10) && valid?(s) end).()
+    |> valid_isbn_of_length?(10)
+  end
+
+  @doc """
+  Check if the string is a valid ISBN 13 number
+
+      iex> ISBN.valid_isbn13?("9781617292019")
+      true
+
+      iex> ISBN.valid_isbn13?("076243631X")
+      false
+
+  """
+  def valid_isbn13?(str) do
+    str
+    |> remove_dashes
+    |> valid_isbn_of_length?(13)
+  end
+
+  defp valid_isbn_of_length?(s, length) do
+    (String.length(s) == length) && valid?(s)
   end
 
   defp _convert_isbn10_to_13(str) do
