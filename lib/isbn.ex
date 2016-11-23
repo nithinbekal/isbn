@@ -120,5 +120,5 @@ defmodule ISBN do
     |> Integer.to_string
   end
 
-  def remove_dashes(s), do: String.replace(s, "-", "")
+  defp remove_dashes(s), do: String.replace(s, "-", "")
 end
