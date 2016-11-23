@@ -16,7 +16,7 @@ defmodule ISBN do
 
   """
   def valid?(s) when is_binary(s) do
-    String.replace(s, "-", "")
+    remove_dashes(s)
     |> String.codepoints
     |> check_valid_isbn
   end
@@ -31,8 +31,8 @@ defmodule ISBN do
   """
   def convert_10_to_13(str) do
     str
-    |> String.replace("-", "")
-    |> convert_isbn10_to_13
+    |> remove_dashes
+    |> _convert_isbn10_to_13
   end
 
   @doc """
@@ -40,11 +40,11 @@ defmodule ISBN do
   """
   def valid_isbn10?(str) do
     str
-    |> String.replace("-", "")
+    |> remove_dashes
     |> (fn s -> (String.length(s) == 10) && valid?(s) end).()
   end
 
-  defp convert_isbn10_to_13(str) do
+  defp _convert_isbn10_to_13(str) do
     if valid_isbn10?(str) do
       "978#{String.slice(str, 0..8)}"
       |> append_isbn13_check_digit
@@ -91,4 +91,6 @@ defmodule ISBN do
     |> (fn x -> 10 - x end).()
     |> Integer.to_string
   end
+
+  def remove_dashes(s), do: String.replace(s, "-", "")
 end
