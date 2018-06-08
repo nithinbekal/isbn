@@ -35,4 +35,8 @@ defmodule ISBNTest do
   test "convert_10_to_13/1 fails for invalid isbn" do
     assert {:error, :invalid_isbn} == ISBN.convert_10_to_13("123")
   end
+
+  test "convert_10_to_13/1 uses 0 if the checkdigit is 10" do
+    assert "9780448060040" == ISBN.convert_10_to_13("0448060043")
+  end
 end

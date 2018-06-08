@@ -17,9 +17,10 @@ defmodule ISBN do
   """
   def valid?(s) when is_binary(s) do
     remove_dashes(s)
-    |> String.codepoints
+    |> String.codepoints()
     |> check_valid_isbn
   end
+
   def valid?(_), do: false
 
   @doc """
@@ -69,7 +70,7 @@ defmodule ISBN do
   end
 
   defp valid_isbn_of_length?(s, length) do
-    (String.length(s) == length) && valid?(s)
+    String.length(s) == length && valid?(s)
   end
 
   defp _convert_isbn10_to_13(str) do
@@ -101,10 +102,10 @@ defmodule ISBN do
     |> Enum.map(&String.to_integer/1)
     |> Enum.zip(10..2)
     |> Enum.map(fn {a, b} -> a * b end)
-    |> Enum.sum
+    |> Enum.sum()
     |> rem(11)
     |> (fn x -> rem(11 - x, 11) end).()
-    |> Integer.to_string
+    |> Integer.to_string()
     |> String.replace("10", "X")
   end
 
@@ -114,10 +115,11 @@ defmodule ISBN do
     |> Enum.map(&String.to_integer/1)
     |> Enum.zip(Stream.cycle([1, 3]))
     |> Enum.map(fn {a, b} -> a * b end)
-    |> Enum.sum
+    |> Enum.sum()
     |> rem(10)
     |> (fn x -> 10 - x end).()
-    |> Integer.to_string
+    |> rem(10)
+    |> Integer.to_string()
   end
 
   defp remove_dashes(s), do: String.replace(s, "-", "")
