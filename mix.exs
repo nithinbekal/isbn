@@ -2,14 +2,15 @@ defmodule ISBN.Mixfile do
   use Mix.Project
 
   def project do
-    [app: :isbn,
-     version: "0.1.2",
-     elixir: "~> 1.3",
-     build_embedded: Mix.env == :prod,
-     start_permanent: Mix.env == :prod,
-     deps: deps,
-     description: "A package to check valid ISBNs",
-     package: package,
+    [
+      app: :isbn,
+      version: "0.1.2",
+      elixir: "~> 1.3",
+      build_embedded: Mix.env() == :prod,
+      start_permanent: Mix.env() == :prod,
+      deps: deps,
+      description: "A package to check valid ISBNs",
+      package: package
     ]
   end
 
@@ -19,7 +20,7 @@ defmodule ISBN.Mixfile do
 
   defp deps do
     [
-      {:ex_doc, ">= 0.0.0", only: :dev},
+      {:ex_doc, ">= 0.0.0", only: :dev}
     ]
   end
 
@@ -29,7 +30,7 @@ defmodule ISBN.Mixfile do
       files: ["lib", "mix.exs"],
       maintainers: ["Nithin Bekal"],
       licenses: ["MIT"],
-      links: %{"Github" => "https://github.com/nithinbekal/isbn"},
+      links: %{"Github" => "https://github.com/nithinbekal/isbn"}
     ]
   end
 end
