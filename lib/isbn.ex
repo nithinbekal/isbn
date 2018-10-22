@@ -1,124 +1,75 @@
 defmodule ISBN do
-  @moduledoc """
-  Provides functions to work with ISBNs.
-  """
+  alias ISBN.{ISBN10, ISBN13}
 
   @doc """
-  Checks if the given string is a valid ISBN.
+  Validates an ISBN-10 or ISBN-13 code.
 
-  Works with both ISBN-10 and ISBN-13. Allows hyphens in the string.
-
-      iex> ISBN.valid?("0-306-40615-2")
+  Examples:
+      iex> ISBN.valid?("978-1-93778-558-1")
       true
 
-      iex> ISBN.valid?("1234567")
+      iex> ISBN.valid?("0-8044-2957-X")
+      true
+
+      iex> ISBN.valid?("0-8044-2957-0")
       false
 
+      iex> ISBN.valid?("978-92-95055-02-5")
+      true
   """
-  def valid?(s) when is_binary(s) do
-    remove_dashes(s)
-    |> String.codepoints
-    |> check_valid_isbn
-  end
+  def valid?(str) when is_binary(str), do: str |> chars |> valid?
+  def valid?(chars) when length(chars) == 10, do: ISBN10.valid?(chars)
+  def valid?(chars) when length(chars) == 13, do: ISBN13.valid?(chars)
   def valid?(_), do: false
 
   @doc """
-  Converts ISBN 10 to ISBN 13.
+  Example:
+      iex> ISBN.normalize("978-3-16-148410 0")
+      "9783161484100"
 
-      iex> ISBN.convert_10_to_13("161729201X")
-      "9781617292019"
+      iex> ISBN.normalize(nil)
+      nil
 
+      iex> ISBN.normalize(1234)
+      nil
   """
-  def convert_10_to_13(str) do
-    str
-    |> remove_dashes
-    |> _convert_isbn10_to_13
-  end
+  def normalize(isbn) when is_binary(isbn), do: isbn |> String.replace(~r/[-\s]/, "")
+  def normalize(_), do: nil
 
   @doc """
-  Checks if the string is a valid ISBN 10 number.
+  Forces and ISBN to ISBN-13 format. Does not validate.
 
-      iex> ISBN.valid_isbn10?("076243631-X")
-      true
+  Example:
+      iex> ISBN.to_isbn13("0-306-40615-2")
+      "9780306406157"
 
-      iex> ISBN.valid_isbn10?("978-0-306-40615-7")
-      false
+      iex> ISBN.to_isbn13("9780306406154")
+      "9780306406154"
 
-  end
-  """
-  def valid_isbn10?(str) do
-    str
-    |> remove_dashes
-    |> valid_isbn_of_length?(10)
-  end
+      iex> ISBN.to_isbn13("0-8044-2957-X")
+      "9780804429573"
 
-  @doc """
-  Check if the string is a valid ISBN 13 number
-
-      iex> ISBN.valid_isbn13?("9781617292019")
-      true
-
-      iex> ISBN.valid_isbn13?("076243631X")
-      false
-
-  """
-  def valid_isbn13?(str) do
-    str
-    |> remove_dashes
-    |> valid_isbn_of_length?(13)
-  end
-
-  defp valid_isbn_of_length?(s, length) do
-    (String.length(s) == length) && valid?(s)
-  end
-
-  defp _convert_isbn10_to_13(str) do
-    if valid_isbn10?(str) do
-      "978#{String.slice(str, 0..8)}"
-      |> append_isbn13_check_digit
-    else
+      iex> ISBN.to_isbn13("asd")
       {:error, :invalid_isbn}
+  """
+  def to_isbn13(isbn) when is_binary(isbn) do
+    isbn = isbn |> normalize
+    case String.length(isbn) do
+      10 -> ISBN10.to_isbn13(isbn)
+      13 -> isbn
+      _ -> {:error, :invalid_isbn}
     end
   end
+  def to_isbn13(_), do: {:error, :invalid_isbn}
 
-  defp append_isbn13_check_digit(s) do
-    s <> isbn13_checkdigit(String.codepoints(s))
+  @doc """
+  Example:
+      iex> ISBN.chars("978-3-16-148410 0")
+      ["9", "7", "8", "3", "1", "6", "1", "4", "8", "4", "1", "0", "0"]
+  """
+  def chars(isbn) do
+    isbn
+    |> normalize
+    |> String.codepoints
   end
-
-  defp check_valid_isbn(digits) when length(digits) == 10 do
-    isbn10_checkdigit(digits) == Enum.at(digits, 9)
-  end
-
-  defp check_valid_isbn(digits) when length(digits) == 13 do
-    isbn13_checkdigit(digits) == Enum.at(digits, 12)
-  end
-
-  defp check_valid_isbn(_), do: false
-
-  defp isbn10_checkdigit(digits) do
-    digits
-    |> Enum.take(9)
-    |> Enum.map(&String.to_integer/1)
-    |> Enum.zip(10..2)
-    |> Enum.map(fn {a, b} -> a * b end)
-    |> Enum.sum
-    |> rem(11)
-    |> (fn x -> rem(11 - x, 11) end).()
-    |> Integer.to_string
-    |> String.replace("10", "X")
-  end
-
-  defp isbn13_checkdigit(digits) do
-    digits
-    |> Enum.take(12)
-    |> Enum.map(&String.to_integer/1)
-    |> Enum.zip(Stream.cycle([1, 3]))
-    |> Enum.map(fn {a, b} -> a * b end)
-    |> Enum.sum
-    |> rem(10)
-    |> (fn x -> 10 - x end).()
-    |> Integer.to_string
-  end
-
-  defp remove_dashes(s), do: String.replace(s, "-", "")
 end

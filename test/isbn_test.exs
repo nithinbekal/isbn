@@ -27,12 +27,12 @@ defmodule ISBNTest do
     assert ISBN.valid?("978-0-306-40615-7")
   end
 
-  test "convert_10_to_13/1 converts valid isbns" do
-    assert "9781617292019" == ISBN.convert_10_to_13("161729201X")
-    assert "9781937785581" == ISBN.convert_10_to_13("1937785580")
+  test "to_isbn13/1 converts valid isbns" do
+    assert "9781617292019" == ISBN.to_isbn13("161729201X")
+    assert "9781937785581" == ISBN.to_isbn13("1937785580")
   end
 
-  test "convert_10_to_13/1 fails for invalid isbn" do
-    assert {:error, :invalid_isbn} == ISBN.convert_10_to_13("123")
+  test "to_isbn13/1 fails for invalid isbn" do
+    assert {:error, :invalid_isbn} == ISBN.to_isbn13("123")
   end
 end
