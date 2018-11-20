@@ -30,6 +30,7 @@ defmodule ISBNTest do
   test "convert_10_to_13/1 converts valid isbns" do
     assert "9781617292019" == ISBN.convert_10_to_13("161729201X")
     assert "9781937785581" == ISBN.convert_10_to_13("1937785580")
+    assert "9780448060040" == ISBN.convert_10_to_13("0448060043")
   end
 
   test "convert_10_to_13/1 fails for invalid isbn" do

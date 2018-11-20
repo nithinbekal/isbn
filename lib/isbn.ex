@@ -117,6 +117,7 @@ defmodule ISBN do
     |> Enum.sum
     |> rem(10)
     |> (fn x -> 10 - x end).()
+    |> rem(10)
     |> Integer.to_string
   end
 
