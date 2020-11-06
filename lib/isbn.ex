@@ -36,6 +36,19 @@ defmodule ISBN do
   end
 
   @doc """
+  Converts ISBN 13 to ISBN 10.
+
+      iex> ISBN.convert_13_to_10("9781617292019")
+      "161729201X"
+
+  """
+  def convert_13_to_10(str) do
+    str
+    |> remove_dashes
+    |> _convert_isbn13_to_10
+  end
+
+  @doc """
   Checks if the string is a valid ISBN 10 number.
 
       iex> ISBN.valid_isbn10?("076243631-X")
@@ -79,6 +92,19 @@ defmodule ISBN do
     else
       {:error, :invalid_isbn}
     end
+  end
+
+  defp _convert_isbn13_to_10(str) do
+    if valid_isbn13?(str) do
+      "#{String.slice(str, 3..11)}"
+      |> append_isbn10_check_digit
+    else
+      {:error, :invalid_isbn}
+    end
+  end
+
+  defp append_isbn10_check_digit(s) do
+    s <> isbn10_checkdigit(String.codepoints(s))
   end
 
   defp append_isbn13_check_digit(s) do
