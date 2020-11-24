@@ -142,7 +142,7 @@ defmodule ISBN do
     |> Enum.map(fn {a, b} -> a * b end)
     |> Enum.sum
     |> rem(10)
-    |> (fn x -> 10 - x end).()
+    |> (fn x -> rem(10 - x, 10) end).()
     |> Integer.to_string
   end
 
